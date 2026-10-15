@@ -1,44 +1,27 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JavaScript DOM CRUD</title>
+    <meta name="theme-color" content="#f5f7fb">
+    <title>Task Manager</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-    <div class="container">
-        <h1>Task Manager</h1>
-        <p>Manage your tasks </p>
-
-        <form id="taskForm">
-            <input
-                type="text"
-                id="taskInput"
-                placeholder="Enter a task..."
-            >
-
-            <button type="submit" id="submitBtn">
-                Add Task
-            </button>
-
-            <button type="button" id="cancelBtn" hidden>
-                Cancel
-            </button>
-        </form>
-
-        <h3>Task List</h3>
-        <p id="emptyMessage">No tasks yet. Add your first task!</p>
-
-        <ul id="taskList"></ul>
-
-        <button type="button" id="darkBtn">
-            Dark Mode
-        </button>
+    <div class="app-shell">
+        <div id="navbar"></div>
+        <main id="app" class="main-content"></main>
+        <div id="footer"></div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="components/button.js" defer></script>
+    <script src="components/input.js" defer></script>
+    <script src="components/navbar.js" defer></script>
+    <script src="components/footer.js" defer></script>
+    <script src="components/modal.js" defer></script>
+    <script src="components/table.js" defer></script>
+    <script src="pages/task.create.js" defer></script>
+    <script src="pages/task.list.js" defer></script>
+    <script src="script.js" defer></script>
 </body>
 </html>

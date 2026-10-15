@@ -1,117 +1,76 @@
+(function () {
+    const tasks = [];
+    let nextId = 1;
 
-const taskForm = document.getElementById("taskForm");
-const taskInput = document.getElementById("taskInput");
-const submitBtn = document.getElementById("submitBtn");
-const cancelBtn = document.getElementById("cancelBtn");
-const taskList = document.getElementById("taskList");
-const emptyMessage = document.getElementById("emptyMessage");
-const darkBtn = document.getElementById("darkBtn");
+    const app = document.getElementById("app");
+    const navbarHost = document.getElementById("navbar");
+    const footerHost = document.getElementById("footer");
+    const listPage = window.TaskPages.createTaskListPage();
 
-let tasks = [];
-let editId = null;
-let nextId = 1;
+    function renderTasks() {
+        window.TaskComponents.renderTaskTable(
+            listPage.tableBody,
+            tasks,
+            function (task) {
+                editingId = task.id;
+                taskDialog.open(task);
+            },
+            function (task) {
+                const taskIndex = tasks.findIndex(function (item) {
+                    return item.id === task.id;
+                });
 
-// READ: Display all tasks
-function displayTasks() {
-    taskList.replaceChildren();
+                if (taskIndex !== -1) {
+                    tasks.splice(taskIndex, 1);
+                    renderTasks();
+                }
+            }
+        );
 
-    emptyMessage.hidden = tasks.length > 0;
+        const hasTasks = tasks.length > 0;
+        listPage.tableWrap.hidden = !hasTasks;
+        listPage.emptyState.hidden = hasTasks;
+        listPage.count.textContent =
+            tasks.length + (tasks.length === 1 ? " task" : " tasks");
+    }
 
-    tasks.forEach(function (task) {
-        const li = document.createElement("li");
-
-        const span = document.createElement("span");
-        span.className = "task-text";
-        span.textContent = task.text;
-
-        // UPDATE: Edit button
-        const editBtn = document.createElement("button");
-        editBtn.textContent = "Edit";
-        editBtn.className = "edit-btn"; 
-
-        editBtn.addEventListener("click", function () {
-            taskInput.value = task.text;
-            editId = task.id;
-
-            submitBtn.textContent = "Update Task";
-            cancelBtn.hidden = false;
-            taskInput.focus();
-        });
-
-        // DELETE: Delete button
-        const deleteBtn = document.createElement("button");
-        deleteBtn.textContent = "Delete";
-        deleteBtn.className = "delete-btn";
-
-        deleteBtn.addEventListener("click", function () {
-            tasks = tasks.filter(function (item) {
-                return item.id !== task.id;
+    let editingId = null;
+    const taskDialog = window.TaskPages.createTaskDialog(function (text) {
+        if (editingId !== null) {
+            const task = tasks.find(function (item) {
+                return item.id === editingId;
             });
 
-            if (editId === task.id) {
-                resetForm();
+            if (task) {
+                task.text = text;
             }
+        } else {
+            tasks.push({ id: nextId++, text: text });
+        }
 
-            displayTasks();
-        });
-
-        li.append(span, editBtn, deleteBtn);
-        taskList.appendChild(li);
+        editingId = null;
+        renderTasks();
     });
-}
 
-// CREATE and UPDATE: Form submission
-taskForm.addEventListener("submit", function (event) {
-    event.preventDefault();
+    taskDialog.element.addEventListener("close", function () {
+        editingId = null;
+    });
 
-    const text = taskInput.value.trim();
-
-    if (text === "") {
-        alert("Please enter a task!");
-        return;
+    function toggleTheme() {
+        const isDark = document.body.classList.toggle("dark");
+        navbar.themeButton.textContent = isDark ? "Light mode" : "Dark mode";
+        navbar.themeButton.setAttribute("aria-pressed", String(isDark));
     }
 
-    if (editId !== null) {
-        // UPDATE existing task
-        tasks = tasks.map(function (task) {
-            if (task.id === editId) {
-                return { ...task, text: text };
-            }
+    const navbar = window.TaskComponents.createNavbar(function () {
+        editingId = null;
+        taskDialog.open(null);
+    }, toggleTheme);
 
-            return task;
-        });
-    } else {
-        // CREATE new task
-        tasks.push({
-            id: nextId++,
-            text: text
-        });
-    }
+    navbarHost.appendChild(navbar.element);
+    footerHost.appendChild(window.TaskComponents.createFooter());
+    app.appendChild(listPage.element);
+    document.body.appendChild(taskDialog.element);
 
-    resetForm();
-    displayTasks();
-});
-
-// Reset input and editing mode
-function resetForm() {
-    taskInput.value = "";
-    editId = null;
-    submitBtn.textContent = "Add Task";
-    cancelBtn.hidden = true;
-}
-
-// Cancel editing
-cancelBtn.addEventListener("click", resetForm);
-
-// Dark mode
-darkBtn.addEventListener("click", function () {
-    document.body.classList.toggle("dark");
-
-    darkBtn.textContent =
-        document.body.classList.contains("dark")
-            ? "Light Mode"
-            : "Dark Mode";
-});
-
-// Initial display
-displayTasks();
+    renderTasks();
+})();
