@@ -1,8 +1,11 @@
 (function () {
+    let nextModalId = 1;
+
     function createModal(titleText) {
         const dialog = document.createElement("dialog");
         dialog.className = "modal";
-        dialog.setAttribute("aria-labelledby", "taskDialogTitle");
+        const titleId = "taskDialogTitle-" + nextModalId++;
+        dialog.setAttribute("aria-labelledby", titleId);
 
         const panel = document.createElement("div");
         panel.className = "modal-panel";
@@ -11,7 +14,7 @@
         header.className = "modal-header";
 
         const title = document.createElement("h2");
-        title.id = "taskDialogTitle";
+        title.id = titleId;
         title.textContent = titleText;
 
         const closeButton = window.TaskComponents.createButton("×", "icon");

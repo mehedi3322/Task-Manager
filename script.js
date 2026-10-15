@@ -16,14 +16,7 @@
                 taskDialog.open(task);
             },
             function (task) {
-                const taskIndex = tasks.findIndex(function (item) {
-                    return item.id === task.id;
-                });
-
-                if (taskIndex !== -1) {
-                    tasks.splice(taskIndex, 1);
-                    renderTasks();
-                }
+                deleteDialog.open(task);
             }
         );
 
@@ -35,17 +28,24 @@
     }
 
     let editingId = null;
-    const taskDialog = window.TaskPages.createTaskDialog(function (text) {
+    const taskDialog = window.TaskPages.createTaskDialog(function (details) {
         if (editingId !== null) {
             const task = tasks.find(function (item) {
                 return item.id === editingId;
             });
 
             if (task) {
-                task.text = text;
+                task.text = details.text;
+                task.date = details.date;
+                task.description = details.description;
             }
         } else {
-            tasks.push({ id: nextId++, text: text });
+            tasks.push({
+                id: nextId++,
+                text: details.text,
+                date: details.date,
+                description: details.description
+            });
         }
 
         editingId = null;
@@ -54,6 +54,17 @@
 
     taskDialog.element.addEventListener("close", function () {
         editingId = null;
+    });
+
+    const deleteDialog = window.TaskPages.createDeleteDialog(function (task) {
+        const taskIndex = tasks.findIndex(function (item) {
+            return item.id === task.id;
+        });
+
+        if (taskIndex !== -1) {
+            tasks.splice(taskIndex, 1);
+            renderTasks();
+        }
     });
 
     function toggleTheme() {
@@ -71,6 +82,7 @@
     footerHost.appendChild(window.TaskComponents.createFooter());
     app.appendChild(listPage.element);
     document.body.appendChild(taskDialog.element);
+    document.body.appendChild(deleteDialog.element);
 
     renderTasks();
 })();

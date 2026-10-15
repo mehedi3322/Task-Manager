@@ -1,3 +1,4 @@
+
 (function () {
     function createTaskTable() {
         const table = document.createElement("table");
@@ -5,7 +6,7 @@
 
         const thead = document.createElement("thead");
         const headerRow = document.createElement("tr");
-        ["Task", "Status", "Actions"].forEach(function (heading) {
+        ["Task ID", "Task name", "Task date", "Description", "Actions"].forEach(function (heading) {
             const th = document.createElement("th");
             th.scope = "col";
             th.textContent = heading;
@@ -24,20 +25,33 @@
 
         tasks.forEach(function (task) {
             const row = document.createElement("tr");
+            const idCell = document.createElement("td");
+            idCell.className = "task-id";
+            idCell.setAttribute("data-label", "Task ID");
+            idCell.textContent = "TASK-" + String(task.id).padStart(4, "0");
+
             const taskCell = document.createElement("td");
             taskCell.className = "task-cell";
+            taskCell.setAttribute("data-label", "Task name");
             taskCell.textContent = task.text;
 
-            const statusCell = document.createElement("td");
-            const status = document.createElement("span");
-            status.className = "status-badge";
-            status.textContent = "In progress";
-            statusCell.appendChild(status);
+            const dateCell = document.createElement("td");
+            dateCell.className = "task-date";
+            dateCell.setAttribute("data-label", "Task date");
+            dateCell.textContent = task.date;
+
+            const descriptionCell = document.createElement("td");
+            descriptionCell.className = "task-description";
+            descriptionCell.setAttribute("data-label", "Description");
+            descriptionCell.textContent = task.description;
 
             const actionsCell = document.createElement("td");
             actionsCell.className = "table-actions";
+            actionsCell.setAttribute("data-label", "Actions");
+            const actionButtons = document.createElement("div");
+            actionButtons.className = "table-action-buttons";
 
-            const editButton = window.TaskComponents.createButton("Edit", "quiet button--small");
+            const editButton = window.TaskComponents.createButton("Update", "quiet button--small");
             editButton.addEventListener("click", function () {
                 onEdit(task);
             });
@@ -47,8 +61,9 @@
                 onDelete(task);
             });
 
-            actionsCell.append(editButton, deleteButton);
-            row.append(taskCell, statusCell, actionsCell);
+            actionButtons.append(editButton, deleteButton);
+            actionsCell.appendChild(actionButtons);
+            row.append(idCell, taskCell, dateCell, descriptionCell, actionsCell);
             tableBody.appendChild(row);
         });
     }
