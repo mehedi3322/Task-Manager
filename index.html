@@ -1,0 +1,44 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript DOM CRUD</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Task Manager</h1>
+        <p>Manage your tasks </p>
+
+        <form id="taskForm">
+            <input
+                type="text"
+                id="taskInput"
+                placeholder="Enter a task..."
+            >
+
+            <button type="submit" id="submitBtn">
+                Add Task
+            </button>
+
+            <button type="button" id="cancelBtn" hidden>
+                Cancel
+            </button>
+        </form>
+
+        <h3>Task List</h3>
+        <p id="emptyMessage">No tasks yet. Add your first task!</p>
+
+        <ul id="taskList"></ul>
+
+        <button type="button" id="darkBtn">
+            Dark Mode
+        </button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
